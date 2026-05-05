@@ -78,11 +78,15 @@ This document covers everything that needs to be installed and configured on the
 Open Command Prompt and run:
 ```bash
 cd C:\
-git clone https://github.com/perfectskills/fras-pilot.git
+git clone https://github.com/thephoenix13/fras-pilot.git
 cd fras-pilot
 ```
 
-> If Git repo is not set up yet, copy the project folder from USB drive to `C:\fras-pilot\`
+> **Note:** The repository is private. You will be prompted for GitHub credentials.  
+> Use the GitHub username and a Personal Access Token (PAT) as the password.  
+> To generate a PAT: GitHub → Settings → Developer Settings → Personal Access Tokens → Generate New Token → select `repo` scope.
+
+> **No internet / no GitHub access?** Copy the project folder from a USB drive to `C:\fras-pilot\` instead.
 
 ---
 
