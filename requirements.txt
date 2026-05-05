@@ -1,0 +1,23 @@
+# Core AI
+insightface==0.7.3
+faiss-cpu>=1.12.0
+onnxruntime>=1.24.1
+
+# Vision
+opencv-python
+Pillow
+numpy
+
+# Data
+pandas
+openpyxl
+
+# Web dashboard
+fastapi
+uvicorn
+jinja2
+python-multipart
+
+# Config & utilities
+pyyaml
+tqdm

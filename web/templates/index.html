@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <form method="get" action="/">
+    <div class="filters">
+      <select name="date">
+        <option value="">All Dates</option>
+        {% for d in dates %}
+        <option value="{{ d }}" {% if filters.date == d %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+      <select name="classroom">
+        <option value="">All Classrooms</option>
+        {% for c in classrooms %}
+        <option value="{{ c }}" {% if filters.classroom == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+      <select name="subject">
+        <option value="">All Subjects</option>
+        {% for s in subjects %}
+        <option value="{{ s }}" {% if filters.subject == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Filter</button>
+      <a href="/" style="font-size:0.85rem; color:#666; text-decoration:none;">Clear</a>
+      <a class="export-btn" href="/export/csv?date={{ filters.date or '' }}&subject={{ filters.subject or '' }}">Export CSV</a>
+    </div>
+  </form>
+
+  {% if records %}
+  <table>
+    <thead>
+      <tr>
+        <th>Student ID</th><th>Name</th><th>Subject</th><th>Session</th><th>Date</th><th>Status</th><th>Detections</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td>{{ r.student_id }}</td>
+        <td>{{ r.name }}</td>
+        <td>{{ r.subject }}</td>
+        <td>{{ r.session }}</td>
+        <td>{{ r.date }}</td>
+        <td><span class="badge badge-{{ r.status | lower }}">{{ r.status }}</span></td>
+        <td>{{ r.detections }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:#666; padding: 16px 0;">No records found. Run a session first.</p>
+  {% endif %}
+</div>
+{% endblock %}

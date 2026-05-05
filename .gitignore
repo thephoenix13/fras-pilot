@@ -1,0 +1,8 @@
+data/photos/
+data/frames/
+db/
+reports/
+__pycache__/
+*.pyc
+.env
+*.egg-info/

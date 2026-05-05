@@ -1,0 +1,21 @@
+camera:
+  rtsp_url: "rtsp://192.168.1.50/stream1"   # replace with actual camera URL
+  classroom_id: "PILOT_ROOM_01"
+  frame_interval_seconds: 2                  # grab 1 frame every N seconds
+  capture_duration_seconds: 120              # how long to sample per session
+
+recognition:
+  detection_confidence: 0.75                 # min confidence to pass to recognition
+  match_threshold: 0.4                       # cosine distance — lower = stricter match
+  min_frames_for_present: 3                  # student needs 3+ detections to be marked Present
+
+paths:
+  photos_dir: "data/photos"
+  frames_dir: "data/frames"
+  faiss_index: "db/faiss.index"
+  student_db: "db/students.json"
+  attendance_db: "db/fras.db"
+
+dashboard:
+  host: "0.0.0.0"
+  port: 8000

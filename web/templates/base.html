@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FRAS — Attendance Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f4f6f9; color: #1a1a2e; }
+    header { background: #1a1a2e; color: white; padding: 16px 32px; display: flex; align-items: center; gap: 16px; }
+    header h1 { font-size: 1.2rem; font-weight: 600; }
+    header span { font-size: 0.85rem; color: #aaa; }
+    nav a { color: #ccc; text-decoration: none; margin-right: 20px; font-size: 0.9rem; }
+    nav a:hover { color: white; }
+    main { padding: 24px 32px; }
+    .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { background: #f0f2f5; text-align: left; padding: 10px 12px; font-weight: 600; }
+    td { padding: 9px 12px; border-bottom: 1px solid #eee; }
+    tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+    .badge-present { background: #d1fae5; color: #065f46; }
+    .badge-absent  { background: #fee2e2; color: #991b1b; }
+    select, input { padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
+    button { padding: 7px 16px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    button:hover { background: #2d2d4e; }
+    .filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    a.export-btn { padding: 7px 16px; background: #065f46; color: white; border-radius: 6px; text-decoration: none; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>FRAS &mdash; Attendance Dashboard</h1>
+  <span>Face Recognition Attendance System | Pilot</span>
+  <nav style="margin-left: auto;">
+    <a href="/">Records</a>
+    <a href="/summary">Summary</a>
+  </nav>
+</header>
+<main>
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

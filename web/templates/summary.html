@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2 style="margin-bottom: 16px; font-size: 1rem;">Session Summary</h2>
+  {% if rows %}
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Subject</th><th>Classroom</th><th>Present</th><th>Total</th><th>Attendance %</th></tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td>{{ r.subject }}</td>
+        <td>{{ r.classroom }}</td>
+        <td>{{ r.present }}</td>
+        <td>{{ r.total }}</td>
+        <td>
+          <span style="color: {% if r.pct >= 75 %}#065f46{% else %}#991b1b{% endif %}; font-weight: 600;">
+            {{ r.pct }}%
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:#666;">No sessions recorded yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
