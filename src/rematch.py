@@ -43,7 +43,7 @@ def init_db(db_path):
     return conn
 
 
-def rematch(frames_dir, session_label, subject, csv_path, config):
+def rematch(frames_dir, session_label, subject, csv_path, config, sample=None):
     classroom_id = config["camera"]["classroom_id"]
     min_frames   = config["recognition"]["min_frames_for_present"]
     db_path      = config["paths"]["attendance_db"]
@@ -54,8 +54,28 @@ def rematch(frames_dir, session_label, subject, csv_path, config):
     print(f"[rematch] Threshold: {threshold} (accepts similarity > {round(1 - threshold, 2)})")
     print(f"[rematch] Min frames for Present: {min_frames}\n")
 
-    # Run recognition on existing frames
-    frame_results = recognize_session(frames_dir, config)
+    # Run recognition on existing frames (optionally limit to N frames)
+    if sample:
+        from recognize import load_index, init_face_model, recognize_frame
+        index, student_db = load_index(config)
+        app = init_face_model()
+        det_conf    = config["recognition"]["detection_confidence"]
+        match_thr   = config["recognition"]["match_threshold"]
+        all_frames  = sorted([
+            os.path.join(frames_dir, f)
+            for f in os.listdir(frames_dir)
+            if f.lower().endswith((".jpg", ".jpeg", ".png"))
+        ])
+        sampled = all_frames[::max(1, len(all_frames) // sample)][:sample]
+        print(f"[rematch] Sampling {len(sampled)} of {len(all_frames)} frames ...")
+        frame_results = {}
+        for fp in sampled:
+            dets = recognize_frame(app, index, student_db, fp, det_conf, match_thr)
+            frame_results[fp] = dets
+            names = [d["name"] for d in dets if d["student_id"] != "UNKNOWN"]
+            print(f"  {os.path.basename(fp)}: {len(dets)} face(s) → {names}")
+    else:
+        frame_results = recognize_session(frames_dir, config)
 
     # Aggregate detections per student
     detection_counts = {}
@@ -122,8 +142,9 @@ if __name__ == "__main__":
     parser.add_argument("--subject", default="General")
     parser.add_argument("--csv",     default="data/students.csv")
     parser.add_argument("--config",  default="config.yaml")
+    parser.add_argument("--sample",  type=int, default=10, help="Number of frames to process (default: 10)")
     args = parser.parse_args()
 
     config        = load_config(args.config)
     session_label = args.session or datetime.now().strftime("%Y%m%d_%H%M%S")
-    rematch(args.frames, session_label, args.subject, args.csv, config)
+    rematch(args.frames, session_label, args.subject, args.csv, config, args.sample)

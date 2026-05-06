@@ -32,7 +32,7 @@ def load_index(config):
 
 def debug(frames_dir, config, sample=5):
     app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
-    app.prepare(ctx_id=-1, det_size=(1280, 1280))
+    app.prepare(ctx_id=-1, det_size=(640, 640))
     index, student_db = load_index(config)
 
     frames = sorted([

@@ -44,7 +44,7 @@ def load_index(config: dict) -> tuple[faiss.Index, dict]:
 
 def init_face_model() -> FaceAnalysis:
     app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
-    app.prepare(ctx_id=-1, det_size=(1280, 1280))
+    app.prepare(ctx_id=-1, det_size=(640, 640))
     return app
 
 
