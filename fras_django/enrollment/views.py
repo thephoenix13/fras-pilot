@@ -68,6 +68,22 @@ def home(request):
     return render(request, 'enrollment/index.html', {'student_count': student_count})
 
 
+def student_list(request):
+    students = Student.objects.filter(is_active=True).order_by('classroom', 'roll_no', 'name')
+    return render(request, 'enrollment/student_list.html', {'students': students})
+
+
+def deactivate_student(request, pk):
+    if request.method == 'POST':
+        from django.shortcuts import get_object_or_404
+        student = get_object_or_404(Student, pk=pk)
+        student.is_active = False
+        student.save()
+        _rebuild_faiss_index()
+        messages.success(request, f"Removed {student.name} from active roster.")
+    return redirect('student_list')
+
+
 def enroll_single(request):
     if request.method == 'POST':
         form = EnrollSingleForm(request.POST, request.FILES)

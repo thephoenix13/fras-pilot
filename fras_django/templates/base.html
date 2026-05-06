@@ -1,12 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FRAS {% block title %}{% endblock %}</title>
-  <link rel="stylesheet" href="{% load static %}{% static 'css/fras.css' %}">
-  {% load static %}
-</head>
+  <link rel="stylesheet" href="{% static 'css/fras.css' %}">
+  </head>
 <body>
 <header>
   <div class="header-left">
@@ -15,7 +15,8 @@
   </div>
   <nav>
     <a href="{% url 'home' %}">Home</a>
-    <a href="{% url 'enroll_single' %}">Enroll Student</a>
+    <a href="{% url 'student_list' %}">Students</a>
+    <a href="{% url 'enroll_single' %}">Enroll</a>
     <a href="{% url 'enroll_bulk' %}">Bulk Enroll</a>
     <a href="{% url 'webcam' %}">Webcam</a>
     <a href="{% url 'dashboard' %}">Attendance</a>

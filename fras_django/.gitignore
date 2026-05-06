@@ -1,0 +1,10 @@
+db/*.db
+db/*.index
+db/faiss_map.json
+media/students/
+media/uploads/
+data/frames/
+__pycache__/
+*.pyc
+*.pyo
+.env
