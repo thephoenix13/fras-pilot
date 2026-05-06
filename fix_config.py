@@ -1,13 +1,13 @@
 config = """camera:
   rtsp_url: "rtsp://admin:admin%40123@172.22.1.241:554/stream1"
   classroom_id: "CLASSROOM-122"
-  frame_interval_seconds: 2
-  capture_duration_seconds: 120
+  frame_interval_seconds: 5
+  capture_duration_seconds: 60
 
 recognition:
   detection_confidence: 0.75
-  match_threshold: 0.4
-  min_frames_for_present: 3
+  match_threshold: 0.6
+  min_frames_for_present: 2
 
 paths:
   photos_dir: "data/photos"
