@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}— Session: {{ session.session_label }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+    <h2>Session: {{ session.session_label }}</h2>
+    <span id="statusBadge" class="badge badge-{% if session.status == 'completed' %}present{% elif session.status == 'failed' %}absent{% else %}running{% endif %}">
+      {{ session.status|upper }}
+    </span>
+  </div>
+  <p style="color:#666; font-size:0.9rem;">{{ session.subject }} &mdash; {{ session.classroom }}</p>
+
+  <div style="margin: 16px 0; display:flex; gap:24px;">
+    <div class="stat-box">
+      <div class="stat-num" id="presentCount">—</div>
+      <div class="stat-label">Present</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="totalCount">—</div>
+      <div class="stat-label">Total Students</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:0.9rem; margin-bottom:8px;">Live Log</h3>
+  <pre id="logBox" style="background:#1a1a2e; color:#ccc; padding:16px; border-radius:6px; font-size:0.8rem; max-height:320px; overflow-y:auto; white-space:pre-wrap;">{{ session.log_output }}</pre>
+
+  {% if session.status == 'completed' %}
+  <div style="margin-top:16px; display:flex; gap:12px;">
+    <a href="{% url 'dashboard' %}" class="export-btn">View Attendance Records</a>
+    <a href="{% url 'export_csv' %}?session={{ session.session_label }}" class="export-btn">Export CSV</a>
+  </div>
+  {% elif session.status == 'failed' %}
+  <p style="color:#e53e3e; margin-top:12px;">Session failed. Check the log above for details.</p>
+  {% endif %}
+</div>
+
+<script>
+const sessionId = {{ session.pk }};
+const isDone    = ['completed', 'failed'].includes('{{ session.status }}');
+
+function poll() {
+  fetch(`/attendance/session/${sessionId}/status/`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('logBox').textContent = data.log_tail;
+      document.getElementById('logBox').scrollTop = 999999;
+      document.getElementById('presentCount').textContent = data.present_count;
+      document.getElementById('totalCount').textContent   = data.total_count;
+
+      const badge = document.getElementById('statusBadge');
+      badge.textContent = data.status.toUpperCase();
+      badge.className   = 'badge badge-' + (
+        data.status === 'completed' ? 'present' :
+        data.status === 'failed'    ? 'absent'  : 'running'
+      );
+
+      if (data.status === 'completed' || data.status === 'failed') {
+        // Reload page to show final action buttons
+        setTimeout(() => location.reload(), 1500);
+      } else {
+        setTimeout(poll, 3000);
+      }
+    });
+}
+
+if (!isDone) { setTimeout(poll, 2000); }
+</script>
+{% endblock %}

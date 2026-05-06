@@ -1,0 +1,11 @@
+django>=4.2,<5.0
+insightface==0.7.3
+faiss-cpu>=1.12.0
+onnxruntime>=1.24.1
+opencv-python
+Pillow
+numpy
+pandas
+openpyxl
+pyyaml
+tqdm

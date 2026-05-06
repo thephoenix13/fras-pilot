@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}— Bulk Enroll{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 600px;">
+  <h2 style="margin-bottom: 8px;">Bulk Enroll</h2>
+  <p style="color:#666; margin-bottom: 20px; font-size:0.9rem;">
+    CSV columns required: <code>student_id, name, roll_no</code><br>
+    Photos ZIP: name each file <code>{student_id}_1.jpg</code>, <code>{student_id}_2.jpg</code> …
+  </p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label>{{ field.label }}{% if field.field.required %} <span style="color:#e53e3e;">*</span>{% endif %}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="field-help">{{ field.help_text }}</div>{% endif %}
+      {% if field.errors %}<div class="field-error">{{ field.errors.0 }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <div style="display:flex; gap:12px; margin-top:24px;">
+      <button type="submit">Start Bulk Enroll</button>
+      <a href="{% url 'home' %}" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

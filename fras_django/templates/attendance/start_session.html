@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}— Start Session{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 540px;">
+  <h2 style="margin-bottom: 20px;">Start Attendance Session</h2>
+  <form method="post" enctype="multipart/form-data" id="sessionForm">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group" id="field-{{ field.name }}">
+      <label>{{ field.label }}{% if field.field.required %} <span style="color:#e53e3e;">*</span>{% endif %}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="field-help">{{ field.help_text }}</div>{% endif %}
+      {% if field.errors %}<div class="field-error">{{ field.errors.0 }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <div style="display:flex; gap:12px; margin-top:24px;">
+      <button type="submit">Start Session</button>
+      <a href="{% url 'dashboard' %}" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+// Show/hide video file field based on source choice
+function toggleVideoField() {
+  const source = document.querySelector('input[name="source"]:checked');
+  const videoField = document.getElementById('field-video_file');
+  if (videoField) {
+    videoField.style.display = source && source.value === 'video' ? 'block' : 'none';
+  }
+}
+document.querySelectorAll('input[name="source"]').forEach(r => r.addEventListener('change', toggleVideoField));
+toggleVideoField();
+</script>
+{% endblock %}

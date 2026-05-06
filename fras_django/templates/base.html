@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FRAS {% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{% load static %}{% static 'css/fras.css' %}">
+  {% load static %}
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <h1>FRAS</h1>
+    <span>Face Recognition Attendance System</span>
+  </div>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'enroll_single' %}">Enroll Student</a>
+    <a href="{% url 'enroll_bulk' %}">Bulk Enroll</a>
+    <a href="{% url 'webcam' %}">Webcam</a>
+    <a href="{% url 'dashboard' %}">Attendance</a>
+    <a href="{% url 'start_session' %}">Start Session</a>
+    <a href="{% url 'summary' %}">Summary</a>
+  </nav>
+</header>
+
+<main>
+  {% if messages %}
+  <div class="messages">
+    {% for msg in messages %}
+    <div class="message message-{{ msg.tags }}">{{ msg }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

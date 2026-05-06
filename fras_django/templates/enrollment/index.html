@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}— Home{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Welcome to FRAS</h2>
+  <p style="color:#666; margin: 8px 0 20px;">Face Recognition Attendance System &mdash; Pilot</p>
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-num">{{ student_count }}</div>
+      <div class="stat-label">Enrolled Students</div>
+    </div>
+  </div>
+  <div class="action-grid">
+    <a class="action-card" href="{% url 'enroll_single' %}">
+      <div class="action-icon">&#43;</div>
+      <div>Enroll Student</div>
+      <small>Add one student with up to 4 photos</small>
+    </a>
+    <a class="action-card" href="{% url 'enroll_bulk' %}">
+      <div class="action-icon">&#8679;</div>
+      <div>Bulk Enroll</div>
+      <small>Upload CSV + photos ZIP</small>
+    </a>
+    <a class="action-card" href="{% url 'webcam' %}">
+      <div class="action-icon">&#9654;</div>
+      <div>Webcam Recognition</div>
+      <small>Test live face matching</small>
+    </a>
+    <a class="action-card" href="{% url 'start_session' %}">
+      <div class="action-icon">&#9679;</div>
+      <div>Start Session</div>
+      <small>Capture attendance via RTSP or video</small>
+    </a>
+    <a class="action-card" href="{% url 'dashboard' %}">
+      <div class="action-icon">&#9776;</div>
+      <div>Attendance Records</div>
+      <small>Filter, view, export CSV</small>
+    </a>
+  </div>
+</div>
+{% endblock %}

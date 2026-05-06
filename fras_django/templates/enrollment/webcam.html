@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}— Webcam Recognition{% endblock %}
+{% block content %}
+<div class="card">
+  <h2 style="margin-bottom: 16px;">Webcam Recognition</h2>
+  <div style="display:flex; gap: 32px; flex-wrap: wrap;">
+    <div>
+      <h3 style="font-size:0.95rem; margin-bottom:8px;">Camera Feed</h3>
+      <video id="video" width="400" height="300" autoplay muted style="border-radius:6px; background:#000;"></video>
+      <br>
+      <button id="captureBtn" style="margin-top:10px;">Capture &amp; Recognise</button>
+    </div>
+    <div>
+      <h3 style="font-size:0.95rem; margin-bottom:8px;">Results</h3>
+      <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+      <img id="capturedImage" style="display:none; border-radius:6px;" width="400">
+      <div id="results" style="margin-top:12px; font-size:0.9rem;"></div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+<script>
+const video   = document.getElementById('video');
+const canvas  = document.getElementById('canvas');
+const ctx     = canvas.getContext('2d');
+const imgEl   = document.getElementById('capturedImage');
+const results = document.getElementById('results');
+
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => { video.srcObject = stream; })
+  .catch(err   => { results.textContent = 'Camera error: ' + err.message; });
+
+document.getElementById('captureBtn').addEventListener('click', async () => {
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL('image/png');
+  imgEl.src = dataUrl;
+  imgEl.style.display = 'block';
+
+  results.innerHTML = '<em>Recognising …</em>';
+
+  const resp = await fetch("{% url 'recognize_image' %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': document.getElementById('csrf_token').value,
+    },
+    body: 'image=' + encodeURIComponent(dataUrl),
+  });
+  const data = await resp.json();
+
+  if (data.error) {
+    results.innerHTML = '<span style="color:#e53e3e;">' + data.error + '</span>';
+    return;
+  }
+  if (!data.results || data.results.length === 0) {
+    results.innerHTML = '<span style="color:#666;">No faces detected.</span>';
+    return;
+  }
+
+  let html = '<ul style="list-style:none; padding:0;">';
+  data.results.forEach(r => {
+    const badge = r.name === 'Unknown'
+      ? '<span class="badge badge-absent">Unknown</span>'
+      : '<span class="badge badge-present">' + r.name + '</span>';
+    html += `<li style="margin-bottom:6px;">${badge} &nbsp; ${r.confidence}% confidence</li>`;
+  });
+  html += '</ul>';
+  results.innerHTML = html;
+});
+</script>
+{% endblock %}
