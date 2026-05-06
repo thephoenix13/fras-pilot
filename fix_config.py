@@ -6,7 +6,7 @@ config = """camera:
 
 recognition:
   detection_confidence: 0.75
-  match_threshold: 0.6
+  match_threshold: 0.82
   min_frames_for_present: 2
 
 paths:
