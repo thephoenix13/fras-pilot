@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4">Face Recognition Attendance System</h2>
+
+        <div class="card mb-3">
+            <div class="card-header"><strong>1. Enroll students</strong></div>
+            <div class="card-body">
+                <p class="text-muted">Upload 4 photos per student so the system learns their face.</p>
+                <a href="{% url 'upload_images' %}" class="btn btn-primary">Enroll Student</a>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header"><strong>2. Take attendance from CCTV</strong></div>
+            <div class="card-body">
+                <p class="text-muted">Connect to an RTSP stream, sample frames, log Present/Absent.</p>
+                <a href="{% url 'start_attendance' %}" class="btn btn-success">Start Attendance Session</a>
+                <a href="{% url 'attendance_dashboard' %}" class="btn btn-outline-secondary">View Records</a>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header"><strong>Tools</strong></div>
+            <div class="card-body">
+                <p class="text-muted">Other workflows for testing and ad-hoc recognition.</p>
+                <a href="{% url 'webcam_template' %}" class="btn btn-outline-primary">Webcam Recognition</a>
+                <a href="{% url 'videofacerecog' %}" class="btn btn-outline-primary">Video / Image Detection</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

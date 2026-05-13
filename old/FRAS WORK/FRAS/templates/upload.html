@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-3">Enroll Student</h2>
+        <p class="text-muted">
+            Upload 4 photos: front view, left profile, right profile, plus an extra (different expression / lighting).
+            Classroom is required if you plan to take attendance for that classroom.
+        </p>
+
+        {% if success %}
+            <div class="alert alert-success">Student enrolled successfully!</div>
+        {% endif %}
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="name">Name *</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="student_id">Student ID</label>
+                    <input type="text" class="form-control" name="student_id" placeholder="e.g. STU001">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="classroom">Classroom</label>
+                    <input type="text" class="form-control" name="classroom" placeholder="e.g. 10A">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="roll_no">Roll Number</label>
+                    <input type="text" class="form-control" name="roll_no" placeholder="e.g. 12">
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <label for="image1">Front face *</label>
+                <input type="file" class="form-control-file" name="image1" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="image2">Left side *</label>
+                <input type="file" class="form-control-file" name="image2" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="image3">Right side *</label>
+                <input type="file" class="form-control-file" name="image3" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="image4">Another expression *</label>
+                <input type="file" class="form-control-file" name="image4" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enroll</button>
+            <a href="{% url 'index' %}" class="btn btn-link">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

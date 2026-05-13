@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h2>Session: {{ session.session_label }}</h2>
+        <p>
+            <strong>Classroom:</strong> {{ session.classroom|default:'(any)' }}
+            &nbsp; | &nbsp;
+            <strong>Subject:</strong> {{ session.subject|default:'(none)' }}
+            &nbsp; | &nbsp;
+            <strong>Status:</strong> <span id="status-badge" class="badge badge-secondary">{{ session.status }}</span>
+        </p>
+        <p>
+            <strong>Present so far:</strong> <span id="present-count">0</span> /
+            <span id="total-count">0</span>
+        </p>
+
+        <h5>Live log</h5>
+        <pre id="log-tail" style="background:#111;color:#0f0;padding:10px;height:400px;overflow:auto;font-size:12px;"></pre>
+
+        <div id="completed-actions" style="display:none;">
+            <a class="btn btn-primary" id="detail-link" href="#">View attendance records</a>
+            <a class="btn btn-outline-secondary" id="csv-link" href="#">Download CSV</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SESSION_ID = {{ session.pk }};
+    const apiUrl     = "{% url 'session_status_api' session.pk %}";
+    const detailUrl  = "{% url 'session_detail' session.pk %}";
+    const csvUrl     = "{% url 'export_attendance_csv' session.pk %}";
+
+    document.getElementById('detail-link').href = detailUrl;
+    document.getElementById('csv-link').href    = csvUrl;
+
+    function badgeClass(status) {
+        return {
+            'pending':   'badge-secondary',
+            'running':   'badge-primary',
+            'completed': 'badge-success',
+            'failed':    'badge-danger',
+        }[status] || 'badge-secondary';
+    }
+
+    let pollTimer = null;
+
+    async function poll() {
+        try {
+            const res = await fetch(apiUrl);
+            const j   = await res.json();
+
+            const badge = document.getElementById('status-badge');
+            badge.textContent = j.status;
+            badge.className = 'badge ' + badgeClass(j.status);
+
+            document.getElementById('log-tail').textContent = j.log_tail;
+            const pre = document.getElementById('log-tail');
+            pre.scrollTop = pre.scrollHeight;
+
+            document.getElementById('present-count').textContent = j.present_count;
+            document.getElementById('total-count').textContent   = j.total_count;
+
+            if (j.completed) {
+                document.getElementById('completed-actions').style.display = 'block';
+                if (pollTimer) clearInterval(pollTimer);
+            }
+        } catch (e) {
+            console.error("poll failed:", e);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        poll();
+        pollTimer = setInterval(poll, 2000);
+    });
+</script>
+{% endblock %}

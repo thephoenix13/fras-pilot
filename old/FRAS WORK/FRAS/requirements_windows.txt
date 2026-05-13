@@ -1,0 +1,12 @@
+# Actual runtime dependencies (the original requirements.txt is misleading —
+# it lists dlib + face-recognition but the running code uses InsightFace).
+#
+# Tested with Python 3.11 / 3.12 / 3.13. Python 3.14 may not have wheels yet
+# for onnxruntime / insightface; if so, use 3.12.
+
+Django>=4.2,<6.1
+insightface==0.7.3
+onnxruntime>=1.17,<2
+opencv-python>=4.9
+numpy>=1.26,<3
+Pillow>=10

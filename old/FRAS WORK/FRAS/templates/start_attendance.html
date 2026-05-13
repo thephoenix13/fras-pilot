@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-3">Start Attendance Session</h2>
+        <p class="text-muted">
+            Connect to your classroom CCTV via RTSP. The system will sample one frame
+            every few seconds, recognise enrolled students, and mark Present/Absent
+            once enough sightings are collected.
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="rtsp_url">RTSP URL *</label>
+                <input type="text" class="form-control" name="rtsp_url"
+                       value="{{ rtsp_url }}" required
+                       placeholder="rtsp://user:pass@192.168.1.50:554/stream1">
+                <small class="form-text text-muted">
+                    Format depends on the camera. Common patterns:
+                    <code>rtsp://&lt;ip&gt;:554/stream1</code> or
+                    <code>rtsp://user:pass@&lt;ip&gt;:554/h264Preview_01_main</code>.
+                </small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="classroom">Classroom *</label>
+                    <input type="text" class="form-control" name="classroom" required
+                           placeholder="e.g. 10A"
+                           list="classroom_list">
+                    <datalist id="classroom_list">
+                        {% for c in classrooms %}<option value="{{ c }}">{% endfor %}
+                    </datalist>
+                    <small class="form-text text-muted">
+                        Determines the roster: every active student in this classroom is rolled into Present/Absent.
+                    </small>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="subject">Subject</label>
+                    <input type="text" class="form-control" name="subject" placeholder="e.g. Mathematics">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="session_label">Session Label</label>
+                <input type="text" class="form-control" name="session_label"
+                       placeholder="auto-generated from timestamp if blank">
+            </div>
+
+            <hr>
+            <h5>Capture settings</h5>
+
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="duration_sec">Duration (sec)</label>
+                    <input type="number" class="form-control" name="duration_sec"
+                           value="{{ duration_sec }}" min="10" max="3600">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="interval_sec">Sample every (sec)</label>
+                    <input type="number" class="form-control" name="interval_sec"
+                           value="{{ interval_sec }}" min="1" max="60">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="min_frames">Min frames for Present</label>
+                    <input type="number" class="form-control" name="min_frames"
+                           value="{{ min_frames }}" min="1" max="100">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="match_thresh">Match threshold</label>
+                    <input type="number" step="0.01" class="form-control" name="match_thresh"
+                           value="{{ match_thresh }}" min="0" max="2">
+                    <small class="form-text text-muted">cosine dist; lower = stricter</small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">Start Session</button>
+            <a href="{% url 'index' %}" class="btn btn-link">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

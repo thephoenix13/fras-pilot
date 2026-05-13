@@ -1,0 +1,178 @@
+
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="alert alert-info" style="margin-top: 50px;">
+    <a href="{% url 'index' %}"><button class="btn btn-primary">Back</button></a><br><br>
+<div class="row">
+    
+    <div class="col-md-6 ">
+        <h1>Webcam Capture</h1>
+        <video id="video" width="360" height="255" autoplay muted></video>
+        <br>
+        <button id="captureButton">Capture Photo</button>
+        <br><br>
+    </div>
+        <div class="col-md-6 ">
+        <h1>Recognition</h1>
+        <canvas id="canvas" width="360" height="255" style="display: none;"></canvas>
+        <img id="capturedImage" style="display: none;">
+        <div id="recognitionResults"></div>
+    
+        <!-- Hidden CSRF token input field -->
+        <input type="hidden" id="csrf_token" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    
+        <script>
+            async function startWebcam() {
+                const video = document.getElementById('video');
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                    video.srcObject = stream;
+                } catch (err) {
+                    console.error("Error accessing the webcam: ", err);
+                }
+            }
+    
+            function capturePhoto() {
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const dataUrl = canvas.toDataURL('image/png');
+                const img = document.getElementById('capturedImage');
+                img.src = dataUrl;
+                img.style.display = 'block';
+                canvas.style.display = 'none';
+                return dataUrl;
+            }
+    
+            async function sendPhotoForRecognition(dataUrl) {
+                const csrfToken = document.getElementById('csrf_token').value;
+                const response = await fetch("{% url 'recognize_image' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: `image=${encodeURIComponent(dataUrl)}`,
+                });
+                const result = await response.json();
+                displayRecognitionResults(result.results);
+            }
+    
+            function displayRecognitionResults(results) {
+                const resultsDiv = document.getElementById('recognitionResults');
+                resultsDiv.innerHTML = "";
+                results.forEach(result => {
+                    const name = result.name;
+                    const location = result.location;
+                    const resultText = document.createElement('p');
+                    resultText.textContent = `Name: ${name}, Location: Top: ${location[0]}, Right: ${location[1]}, Bottom: ${location[2]}, Left: ${location[3]}`;
+                    resultsDiv.appendChild(resultText);
+                });
+            }
+    
+            document.addEventListener('DOMContentLoaded', (event) => {
+                startWebcam();
+    
+                const captureButton = document.getElementById('captureButton');
+                captureButton.addEventListener('click', () => {
+                    const dataUrl = capturePhoto();
+                    sendPhotoForRecognition(dataUrl);
+                });
+            });
+        </script>
+</div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Webcam Capture and Recognition</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Webcam Capture and Recognition</h1>
+    <p>Webcam feed will appear below:</p>
+    <video id="video" width="720" height="560" autoplay muted></video>
+    <br>
+    <button id="captureButton">Capture Photo</button>
+    <br><br>
+    <h2>Captured Photo:</h2>
+    <canvas id="canvas" width="720" height="560" style="display: none;"></canvas>
+    <img id="capturedImage" style="display: none;">
+    <div id="recognitionResults"></div>
+
+    <!-- Hidden CSRF token input field -->
+    <input type="hidden" id="csrf_token" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <script>
+        async function startWebcam() {
+            const video = document.getElementById('video');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Error accessing the webcam: ", err);
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/png');
+            const img = document.getElementById('capturedImage');
+            img.src = dataUrl;
+            img.style.display = 'block';
+            canvas.style.display = 'none';
+            return dataUrl;
+        }
+
+        async function sendPhotoForRecognition(dataUrl) {
+            const csrfToken = document.getElementById('csrf_token').value;
+            const response = await fetch("{% url 'recognize_image' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: `image=${encodeURIComponent(dataUrl)}`,
+            });
+            const result = await response.json();
+            displayRecognitionResults(result.results);
+        }
+
+        function displayRecognitionResults(results) {
+            const resultsDiv = document.getElementById('recognitionResults');
+            resultsDiv.innerHTML = "";
+            results.forEach(result => {
+                const name = result.name;
+                const location = result.location;
+                const resultText = document.createElement('p');
+                resultText.textContent = `Name: ${name}, Location: Top: ${location[0]}, Right: ${location[1]}, Bottom: ${location[2]}, Left: ${location[3]}`;
+                resultsDiv.appendChild(resultText);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            startWebcam();
+
+            const captureButton = document.getElementById('captureButton');
+            captureButton.addEventListener('click', () => {
+                const dataUrl = capturePhoto();
+                sendPhotoForRecognition(dataUrl);
+            });
+        });
+    </script>
+</body>
+</html>

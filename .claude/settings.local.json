@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "PowerShell(Get-ChildItem -Force \"D:\\\\Projects\\\\FRAS\\\\\" | Where-Object { $_.Name -notin @\\('.git', 'old'\\) } | Select-Object Mode, Name | Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Force \"D:\\\\Projects\\\\FRAS\\\\data\\\\\" -Recurse -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object FullName, Length | Format-Table -AutoSize | Select-Object -First 50)",
+      "PowerShell(Get-ChildItem -Force \"D:\\\\Projects\\\\FRAS\\\\fras_django\\\\media\\\\\" -Recurse -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object FullName | Format-Table -AutoSize | Select-Object -First 30)",
+      "Bash(python -c \"import insightface, cv2, numpy; print\\(f'insightface {insightface.__version__} | cv2 {cv2.__version__} | numpy {numpy.__version__}'\\)\")",
+      "Bash(python -c \"import cv2; print\\('cv2', cv2.__version__\\)\")",
+      "Bash(python -c \"import numpy; print\\('numpy', numpy.__version__\\)\")",
+      "Bash(python -c \"import faiss; print\\('faiss', faiss.__version__\\)\")",
+      "Bash(python -c \"import onnxruntime; print\\('onnxruntime', onnxruntime.__version__\\)\")",
+      "Bash(gh repo *)",
+      "PowerShell($size = \\(Get-ChildItem \"old\\\\FRAS WORK\\\\env\" -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum\\).Sum; \"{0:N0} MB\" -f \\($size / 1MB\\))"
+    ]
+  }
+}

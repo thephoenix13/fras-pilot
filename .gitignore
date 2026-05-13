@@ -6,3 +6,4 @@ __pycache__/
 *.pyc
 .env
 *.egg-info/
+old/FRAS WORK/env/

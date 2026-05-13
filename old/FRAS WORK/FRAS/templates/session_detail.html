@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% url 'attendance_dashboard' %}" class="btn btn-link mb-2">← Back to records</a>
+
+<h2>{{ session.session_label }}</h2>
+<p>
+    <strong>Classroom:</strong> {{ session.classroom|default:'(any)' }}
+    &nbsp;|&nbsp;
+    <strong>Subject:</strong> {{ session.subject|default:'(none)' }}
+    &nbsp;|&nbsp;
+    <strong>Started:</strong> {{ session.started_at|date:"Y-m-d H:i:s" }}
+    &nbsp;|&nbsp;
+    <strong>Status:</strong>
+    <span class="badge badge-{% if session.status == 'completed' %}success{% elif session.status == 'running' %}primary{% elif session.status == 'failed' %}danger{% else %}secondary{% endif %}">
+        {{ session.status }}
+    </span>
+</p>
+
+<p>
+    <a href="{% url 'export_attendance_csv' session.pk %}" class="btn btn-outline-primary btn-sm">Download CSV</a>
+    {% if session.status == 'running' %}
+        <a href="{% url 'session_status' session.pk %}" class="btn btn-outline-info btn-sm">Live status</a>
+    {% endif %}
+</p>
+
+<table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Roll</th>
+            <th>Status</th>
+            <th>Detections</th>
+            <th>Best Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in records %}
+        <tr class="{% if r.status == 'Present' %}table-success{% else %}table-warning{% endif %}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ r.student.student_id|default:"—" }}</td>
+            <td>{{ r.student.name }}</td>
+            <td>{{ r.student.roll_no|default:"—" }}</td>
+            <td><strong>{{ r.status }}</strong></td>
+            <td>{{ r.detections }}</td>
+            <td>{{ r.best_score|floatformat:3 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-4">No records yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if session.status == 'failed' or session.log_output %}
+    <h5 class="mt-4">Session log</h5>
+    <pre style="background:#111;color:#0f0;padding:10px;max-height:400px;overflow:auto;font-size:12px;">{{ session.log_output }}</pre>
+{% endif %}
+{% endblock %}

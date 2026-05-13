@@ -1,0 +1,101 @@
+from django.shortcuts import render
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import os
+import cv2
+import face_recognition
+from PIL import Image, ImageEnhance
+import numpy as np
+
+# Ensure directory exists for storing processed files
+def ensure_dir(file_path):
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+
+# Pre-process image to enhance detection
+def enhance_image(image):
+    enhancer = ImageEnhance.Contrast(image)
+    enhanced_image = enhancer.enhance(2)  # Increase contrast for better detection
+    return enhanced_image
+
+# Extract and save faces from video
+def extract_and_save_unique_faces(video_path, uploads_dir):
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        return []
+
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frames_per_two_seconds = int(fps * 2)
+    saved_faces = []
+    face_encodings = []
+    two_second_count = 0
+
+    while True:
+        frame_index = two_second_count * frames_per_two_seconds
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Convert frame to RGB for face_recognition processing
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        face_locations = face_recognition.face_locations(rgb_frame, model='cnn', number_of_times_to_upsample=1)
+        face_encs = face_recognition.face_encodings(rgb_frame, face_locations)
+
+        for (top, right, bottom, left), face_encoding in zip(face_locations, face_encs):
+            matches = face_recognition.compare_faces(face_encodings, face_encoding, tolerance=0.6)
+            if not any(matches):
+                face_encodings.append(face_encoding)
+                face_image = frame[top:bottom, left:right]
+                face_filename = f"unique_face_{len(face_encodings)}.jpg"
+                face_path = os.path.join(uploads_dir, face_filename)
+                cv2.imwrite(face_path, face_image)
+                saved_faces.append(face_filename)
+
+        two_second_count += 1
+
+    cap.release()
+    return saved_faces
+
+# Main view handling file uploads
+def index(request):
+    if request.method == 'POST':
+        file = request.FILES['media']
+        fs = FileSystemStorage()
+        filename = fs.save(file.name, file)
+        uploaded_file_url = fs.url(filename)
+        media_path = fs.path(filename)
+
+        uploads_dir = os.path.join(settings.MEDIA_ROOT, 'uploads')
+        ensure_dir(uploads_dir)  # Ensure the upload directory exists
+
+        if 'image' in file.content_type:
+            # Handle image uploads
+            image = Image.open(media_path)
+            enhanced_image = enhance_image(image)
+            image_np = np.array(enhanced_image)  # Convert enhanced image to numpy array for processing
+            face_locations = face_recognition.face_locations(image_np, model="cnn", number_of_times_to_upsample=1)
+            pil_image = Image.fromarray(image_np)
+            face_files = []
+            for (top, right, bottom, left) in face_locations:
+                face_image = pil_image.crop((left, top, right, bottom))
+                face_image.thumbnail((200, 200))
+                face_file_path = os.path.join(uploads_dir, f"{filename}-{top}.jpg")
+                face_image.save(face_file_path)
+                face_files.append(fs.url(f"uploads/{filename}-{top}.jpg"))
+
+            return render(request, 'show_faces.html', {
+                'original_image': uploaded_file_url,
+                'faces': face_files
+            })
+
+        elif 'video' in file.content_type:
+            # Handle video uploads
+            face_files = extract_and_save_unique_faces(media_path, uploads_dir)
+            face_files_urls = [fs.url(os.path.join('uploads', face_file)) for face_file in face_files]
+            return render(request, 'show_faces.html', {
+                'faces': face_files_urls
+            })
+
+    return render(request, 'index.html')
+

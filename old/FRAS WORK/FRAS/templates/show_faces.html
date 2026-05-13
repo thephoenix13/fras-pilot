@@ -1,0 +1,41 @@
+<!-- templates/show_faces.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+
+    <div class="col-md-12">
+        <a href="{% url 'index' %}"><button class="btn btn-primary">Back</button></a><br><br>
+
+        {% if original_image %}
+        <div class="alert alert-info">
+            <strong>Original Image:</strong>
+            <div>
+                <img src="{{ original_image }}" class="img-thumbnail" alt="Original Image" style="width: 200px; height: 200px;">
+            </div>
+        </div>
+        {% endif %}
+        {% if original_video %}
+        <div class="alert alert-info">
+            <strong>Original Video:</strong>
+            <div>
+                <video width="320" height="240" controls>
+                    <source src="{{ original_video }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+        {% endif %}
+        <div class="alert alert-success">
+            <strong>Detected Faces:</strong>
+            <div class="d-flex flex-wrap">
+                {% for face in faces %}
+                <div class="p-2">
+                    <img src="{{ face }}" class="img-thumbnail" alt="Face" style="width: 200px; height: 200px;">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Attendance Records</h2>
+
+<form method="get" class="form-inline mb-3">
+    <select name="classroom" class="form-control mr-2">
+        <option value="">All classrooms</option>
+        {% for c in classrooms %}
+            <option value="{{ c }}" {% if filters.classroom == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+    </select>
+    <select name="subject" class="form-control mr-2">
+        <option value="">All subjects</option>
+        {% for s in subjects %}
+            <option value="{{ s }}" {% if filters.subject == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+    </select>
+    <input type="date" name="date" value="{{ filters.date }}" class="form-control mr-2">
+    <button type="submit" class="btn btn-outline-primary mr-2">Filter</button>
+    <a href="{% url 'attendance_dashboard' %}" class="btn btn-link">Reset</a>
+    <span class="ml-auto">
+        <a href="{% url 'start_attendance' %}" class="btn btn-success">+ New Session</a>
+    </span>
+</form>
+
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>Started</th>
+            <th>Session</th>
+            <th>Classroom</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Present / Total</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in sessions %}
+            <tr>
+                <td>{{ entry.session.started_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ entry.session.session_label }}</td>
+                <td>{{ entry.session.classroom }}</td>
+                <td>{{ entry.session.subject }}</td>
+                <td>
+                    <span class="badge badge-{% if entry.session.status == 'completed' %}success{% elif entry.session.status == 'running' %}primary{% elif entry.session.status == 'failed' %}danger{% else %}secondary{% endif %}">
+                        {{ entry.session.status }}
+                    </span>
+                </td>
+                <td>{{ entry.present }} / {{ entry.total }}</td>
+                <td>
+                    <a href="{% url 'session_detail' entry.session.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                    {% if entry.session.status == 'completed' %}
+                        <a href="{% url 'export_attendance_csv' entry.session.pk %}" class="btn btn-sm btn-outline-secondary">CSV</a>
+                    {% elif entry.session.status == 'running' %}
+                        <a href="{% url 'session_status' entry.session.pk %}" class="btn btn-sm btn-outline-info">Live</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7" class="text-center text-muted py-4">No sessions yet. <a href="{% url 'start_attendance' %}">Start one →</a></td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

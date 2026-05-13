@@ -1,9 +1,7 @@
 # FRAS — Technical Setup Guide for School Device
 **Perfect Skills | Confidential**  
 This document covers everything that needs to be installed and configured on the school's server or PC before the FRAS pilot can run.
-
-> **Who does this:** Either Pratik remotely (via TeamViewer) or the school's IT person in advance.  
-> **When:** Must be completed before the trial day.  
+  
 > **Time required:** ~1–2 hours (mostly waiting for downloads).
 
 ---
