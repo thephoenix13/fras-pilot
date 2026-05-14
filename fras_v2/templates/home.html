@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<h1>FRAS Pilot Dashboard</h1>
+<p class="subtitle">Face Recognition Attendance System — automated classroom attendance via CCTV</p>
+
+<div class="stat-row">
+    <div class="stat">
+        <div class="stat-num">{{ n_students }}</div>
+        <div class="stat-label">Enrolled Students</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">{{ n_sessions }}</div>
+        <div class="stat-label">Total Sessions</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Quick Actions</h2>
+    <div class="grid-cards" style="margin-top: 18px;">
+        <a href="{% url 'upload_students' %}" class="feature-card">
+            <div class="icon">📥</div>
+            <div class="title">Upload Students</div>
+            <div class="desc">Bulk import via CSV + photos zip</div>
+        </a>
+        <a href="{% url 'students_list' %}" class="feature-card">
+            <div class="icon">👥</div>
+            <div class="title">View Students</div>
+            <div class="desc">Browse enrolled students</div>
+        </a>
+        <a href="{% url 'start_session' %}" class="feature-card">
+            <div class="icon">📹</div>
+            <div class="title">Start Live Session</div>
+            <div class="desc">Begin attendance via CCTV or webcam</div>
+        </a>
+        <a href="{% url 'all_sessions' %}" class="feature-card">
+            <div class="icon">📊</div>
+            <div class="title">Reports</div>
+            <div class="desc">View past sessions & download CSVs</div>
+        </a>
+    </div>
+</div>
+
+{% if recent_sessions %}
+<div class="card">
+    <h2>Recent Sessions</h2>
+    <table>
+        <thead>
+            <tr><th>Date</th><th>Classroom</th><th>Subject</th><th>Status</th><th>Source</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for s in recent_sessions %}
+            <tr>
+                <td>{{ s.date }}</td>
+                <td>{{ s.classroom }}</td>
+                <td>{{ s.subject|default:"—" }}</td>
+                <td><span class="badge badge-{{ s.status }}">{{ s.status|upper }}</span></td>
+                <td>{{ s.get_source_type_display }}</td>
+                <td>
+                    <a href="{% url 'session_status' s.pk %}" class="btn btn-sm btn-secondary">View</a>
+                    <a href="{% url 'session_reports' s.pk %}" class="btn btn-sm btn-secondary">Reports</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<div class="card" style="background: #f8fafc;">
+    <h3>How it works</h3>
+    <ol style="margin: 8px 0; padding-left: 22px; color: var(--ink-soft); font-size: 0.93rem;">
+        <li>Upload a CSV of students with their photos.</li>
+        <li>Start a live session pointing at the classroom CCTV (RTSP) or webcam.</li>
+        <li>System captures frames continuously, recognizing faces every 2 seconds.</li>
+        <li>Every 60 minutes, an hourly report is auto-generated.</li>
+        <li>At end of day, students appearing in <strong>≥75% of hourly reports</strong> are marked Present.</li>
+        <li>Download individual hourly reports + final daily attendance as CSV.</li>
+    </ol>
+</div>
+
+{% endblock %}

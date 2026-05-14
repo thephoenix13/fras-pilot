@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Start Session{% endblock %}
+{% block content %}
+
+<h1>Start Live Attendance Session</h1>
+<p class="subtitle">Begin a new attendance capture session</p>
+
+<div class="card" style="max-width: 640px;">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Classroom *</label>
+            <input type="text" name="classroom" required placeholder="e.g. 10A, Room 204">
+        </div>
+
+        <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" name="subject" placeholder="e.g. Mathematics">
+        </div>
+
+        <div class="form-group">
+            <label>Camera Source *</label>
+            <select name="source_type" id="source_type" required>
+                <option value="webcam">Local Webcam (for testing)</option>
+                <option value="rtsp">RTSP CCTV Camera</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="rtsp_url_group" style="display: none;">
+            <label>RTSP URL</label>
+            <input type="text" name="rtsp_url" placeholder="rtsp://user:pass@192.168.1.50/stream1">
+            <div class="help">Full URL from your CCTV camera's stream settings.</div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Start Session</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<div class="card" style="background: #f8fafc;">
+    <h3>What happens when you start?</h3>
+    <ol style="margin: 8px 0; padding-left: 22px; font-size: 0.9rem; color: var(--ink-soft);">
+        <li>Camera opens and starts capturing frames every 2 seconds</li>
+        <li>Each frame is analyzed for faces and matched against enrolled students</li>
+        <li>Every 60 minutes, an hourly report is automatically generated</li>
+        <li>When you stop the session, the daily attendance is computed</li>
+        <li>Students appearing in ≥75% of hourly reports → marked Present</li>
+    </ol>
+</div>
+
+<script>
+    const sourceSelect = document.getElementById('source_type');
+    const rtspGroup = document.getElementById('rtsp_url_group');
+    function toggle() {
+        rtspGroup.style.display = sourceSelect.value === 'rtsp' ? 'block' : 'none';
+    }
+    sourceSelect.addEventListener('change', toggle);
+    toggle();
+</script>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Upload Students{% endblock %}
+{% block content %}
+
+<h1>Upload Students</h1>
+<p class="subtitle">Bulk import students via CSV + photos zip</p>
+
+<div class="card">
+    <h2>Upload</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Students CSV file *</label>
+            <input type="file" name="csv_file" accept=".csv" required>
+            <div class="help">CSV columns: <code>name</code>, <code>roll_number</code>, <code>photo</code> (required). Optional: <code>photo1</code>–<code>photo4</code>, <code>classroom</code>, <code>section</code>, <code>student_id</code>, <code>parent_contact</code>.</div>
+        </div>
+        <div class="form-group">
+            <label>Photos ZIP file (optional)</label>
+            <input type="file" name="photos_zip" accept=".zip">
+            <div class="help">All photos referenced in the CSV. Files can be in subdirectories — only the filename matters.</div>
+        </div>
+        <button type="submit" class="btn">Upload &amp; Enroll</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{% if created or updated or failed %}
+<div class="card">
+    <h3>Result</h3>
+    <p>
+        ✅ Created: <strong>{{ created }}</strong>
+        &nbsp;·&nbsp;
+        🔄 Updated: <strong>{{ updated }}</strong>
+        &nbsp;·&nbsp;
+        ⚠️ Failed: <strong>{{ failed }}</strong>
+    </p>
+    {% if errors %}
+    <h3 style="margin-top: 14px;">Issues</h3>
+    <ul style="font-size: 0.88rem; color: var(--ink-soft);">
+        {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="card" style="background: #f8fafc;">
+    <h3>CSV Format Example</h3>
+    <pre style="background: #fff; border: 1px solid var(--border); padding: 12px; border-radius: 7px; overflow-x: auto; font-size: 0.85rem;">name,roll_number,photo1,photo2,photo3,photo4,classroom,section
+Sarvesh Deshmukh,42,sarvesh_1.jpg,sarvesh_2.jpg,sarvesh_3.jpg,sarvesh_4.jpg,10A,A
+Rahul Kumar,25,rahul.jpg,,,,10A,A
+Priya Singh,18,priya_front.jpg,priya_side.jpg,,,10A,A</pre>
+
+    <p style="font-size: 0.88rem; color: var(--ink-soft); margin-top: 12px;">
+        <strong>Tips for best accuracy:</strong>
+    </p>
+    <ul style="font-size: 0.88rem; color: var(--ink-soft); margin: 6px 0 0; padding-left: 22px;">
+        <li>Use 2-4 photos per student (front, sides, different expression)</li>
+        <li>Include a photo similar to CCTV conditions (lower resolution, distance shot)</li>
+        <li>JPG/PNG only — HEIC files won't work</li>
+        <li>Photo filenames in CSV must match files in zip exactly</li>
+    </ul>
+</div>
+
+{% endblock %}

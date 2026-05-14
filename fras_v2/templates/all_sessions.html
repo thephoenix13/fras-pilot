@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}All Sessions{% endblock %}
+{% block content %}
+
+<h1>All Sessions</h1>
+<p class="subtitle">{{ sessions|length }} session(s) on record</p>
+
+<div class="card">
+    {% if sessions %}
+    <table>
+        <thead>
+            <tr><th>Date</th><th>Classroom</th><th>Subject</th><th>Source</th><th>Status</th><th>Reports</th><th>Frames</th><th></th></tr>
+        </thead>
+        <tbody>
+        {% for s in sessions %}
+            <tr>
+                <td>{{ s.date }}</td>
+                <td>{{ s.classroom }}</td>
+                <td>{{ s.subject|default:"—" }}</td>
+                <td>{{ s.get_source_type_display }}</td>
+                <td><span class="badge badge-{{ s.status }}">{{ s.status|upper }}</span></td>
+                <td>{{ s.reports.count }}</td>
+                <td>{{ s.total_frames_processed }}</td>
+                <td>
+                    <a href="{% url 'session_status' s.pk %}" class="btn btn-sm btn-secondary">View</a>
+                    <a href="{% url 'session_reports' s.pk %}" class="btn btn-sm">Reports</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--ink-muted);">
+        No sessions yet. <a href="{% url 'start_session' %}">Start one</a>.
+    </p>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Session Reports{% endblock %}
+{% block content %}
+
+<h1>Session Reports</h1>
+<p class="subtitle">{{ session.classroom }} · {{ session.date }} · <span class="badge badge-{{ session.status }}">{{ session.status|upper }}</span></p>
+
+<div style="margin-bottom: 16px; display: flex; gap: 10px;">
+    <a href="{% url 'session_status' session.pk %}" class="btn btn-secondary">← Back to Live View</a>
+    <a href="{% url 'download_all_reports_zip' session.pk %}" class="btn">⬇ Download All (ZIP)</a>
+    {% if daily %}
+        <a href="{% url 'download_daily_report' session.pk %}" class="btn btn-success">⬇ Daily Attendance CSV</a>
+    {% endif %}
+</div>
+
+{% if reports %}
+<div class="card">
+    <h2>Attendance Matrix</h2>
+    <p style="font-size: 0.9rem; color: var(--ink-soft);">
+        Green = Present in that hour · Gray = Not detected · Daily verdict uses ≥75% rule
+    </p>
+    <div style="overflow-x: auto;">
+        <table style="font-size: 0.85rem;">
+            <thead>
+                <tr>
+                    <th>Roll</th>
+                    <th>Name</th>
+                    {% for r in reports %}
+                        <th title="Report #{{ r.report_number }}">R{{ r.report_number }}</th>
+                    {% endfor %}
+                    <th>%</th>
+                    <th>Final</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in matrix %}
+                <tr>
+                    <td><strong>{{ row.student.roll_number }}</strong></td>
+                    <td>{{ row.student.name }}</td>
+                    {% for cell in row.cells %}
+                        <td style="text-align: center;">
+                            {% if cell.present %}
+                                <span title="{{ cell.count }} detections, {{ cell.confidence|floatformat:0 }}% conf" style="color: var(--success); font-size: 1.1rem;">●</span>
+                            {% else %}
+                                <span style="color: #cbd5e1;">○</span>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td>
+                        {% if row.daily %}{{ row.daily.presence_percentage|floatformat:0 }}%{% else %}—{% endif %}
+                    </td>
+                    <td>
+                        {% if row.daily %}
+                            <span class="badge badge-{% if row.daily.final_status == 'Present' %}present{% else %}absent{% endif %}">{{ row.daily.final_status }}</span>
+                        {% else %}
+                            <span style="color: var(--ink-muted);">pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Individual Hourly Reports</h2>
+    <table>
+        <thead>
+            <tr><th>Report</th><th>Period</th><th>Frames</th><th>Total Detections</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for r in reports %}
+            <tr>
+                <td><strong>#{{ r.report_number }}</strong></td>
+                <td>{{ r.period_start|date:"H:i" }} – {{ r.period_end|date:"H:i" }}</td>
+                <td>{{ r.frames_processed }}</td>
+                <td>{{ r.total_face_detections }}</td>
+                <td>
+                    <a href="{% url 'download_hourly_report' session.pk r.report_number %}" class="btn btn-sm">⬇ CSV</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if daily %}
+<div class="card">
+    <h2>Daily Attendance Summary</h2>
+    {% with total=daily.count %}
+    {% endwith %}
+    <table>
+        <thead>
+            <tr><th>Roll</th><th>Name</th><th>Reports Present</th><th>Percentage</th><th>Final Status</th></tr>
+        </thead>
+        <tbody>
+            {% for d in daily %}
+            <tr>
+                <td>{{ d.student.roll_number }}</td>
+                <td>{{ d.student.name }}</td>
+                <td>{{ d.reports_present_in }} / {{ d.total_reports }}</td>
+                <td>{{ d.presence_percentage|floatformat:1 }}%</td>
+                <td><span class="badge badge-{% if d.final_status == 'Present' %}present{% else %}absent{% endif %}">{{ d.final_status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <p style="color: var(--ink-muted);">No reports yet. Reports are generated every 60 minutes during a live session.</p>
+</div>
+{% endif %}
+
+{% endblock %}

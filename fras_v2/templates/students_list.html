@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Students{% endblock %}
+{% block content %}
+
+<h1>Enrolled Students</h1>
+<p class="subtitle">{{ students|length }} student(s) currently enrolled</p>
+
+<div class="card">
+    {% if students %}
+    <table>
+        <thead>
+            <tr>
+                <th>Roll</th>
+                <th>Name</th>
+                <th>Classroom</th>
+                <th>Section</th>
+                <th>Photos</th>
+                <th>Embeddings</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for s in students %}
+            <tr>
+                <td><strong>{{ s.roll_number }}</strong></td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.classroom }}</td>
+                <td>{{ s.section|default:"—" }}</td>
+                <td>
+                    {% for p in s.photos.all %}
+                        <img src="{{ p.image.url }}" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px; margin-right: 4px;" alt="">
+                    {% empty %}—{% endfor %}
+                </td>
+                <td>{{ s.n_embeddings }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--ink-muted);">No students enrolled yet. <a href="{% url 'upload_students' %}">Upload some</a>.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
