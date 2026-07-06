@@ -1,0 +1,68 @@
+FRAS capture run -- 20260706_100224
+Stream:    rtsp://admin:admin%40123@172.22.1.241:554/stream1
+Duration:  2966.8s
+Frames:    60
+Faces:     100 crops saved
+Det size:  640x640
+
+frame                                    resolution   faces      scores
+--------------------------------------------------------------------------------
+frame_0001_100234.jpg	2560x1440	3 faces	face1=73%, face2=71%, face3=71%
+frame_0002_100240.jpg	2560x1440	3 faces	face1=80%, face2=72%, face3=70%
+frame_0003_100246.jpg	2560x1440	2 faces	face1=70%, face2=70%
+frame_0004_100250.jpg	2560x1440	3 faces	face1=71%, face2=71%, face3=70%
+frame_0005_100255.jpg	2560x1440	2 faces	face1=74%, face2=71%
+frame_0006_100259.jpg	2560x1440	3 faces	face1=80%, face2=71%, face3=70%
+frame_0007_100304.jpg	2560x1440	4 faces	face1=82%, face2=71%, face3=70%, face4=70%
+frame_0008_100310.jpg	2560x1440	4 faces	face1=78%, face2=71%, face3=70%, face4=70%
+frame_0009_100317.jpg	2560x1440	4 faces	face1=83%, face2=71%, face3=70%, face4=70%
+frame_0010_100323.jpg	2560x1440	4 faces	face1=79%, face2=73%, face3=71%, face4=71%
+frame_0011_100329.jpg	2560x1440	4 faces	face1=79%, face2=74%, face3=72%, face4=71%
+frame_0012_100335.jpg	2560x1440	3 faces	face1=82%, face2=73%, face3=72%
+frame_0013_100341.jpg	2560x1440	3 faces	face1=84%, face2=72%, face3=72%
+frame_0014_100348.jpg	2560x1440	4 faces	face1=84%, face2=73%, face3=72%, face4=71%
+frame_0015_100354.jpg	2560x1440	4 faces	face1=83%, face2=72%, face3=72%, face4=70%
+frame_0016_100359.jpg	2560x1440	3 faces	face1=79%, face2=73%, face3=72%
+frame_0017_100403.jpg	2560x1440	3 faces	face1=80%, face2=72%, face3=72%
+frame_0018_100408.jpg	2560x1440	4 faces	face1=84%, face2=74%, face3=73%, face4=72%
+frame_0019_100412.jpg	2560x1440	4 faces	face1=83%, face2=76%, face3=73%, face4=72%
+frame_0020_100418.jpg	2560x1440	3 faces	face1=84%, face2=74%, face3=73%
+frame_0021_100423.jpg	2560x1440	1 faces	face1=83%
+frame_0022_100432.jpg	2560x1440	0 faces	
+frame_0023_100438.jpg	2560x1440	0 faces	
+frame_0024_100444.jpg	2560x1440	0 faces	
+frame_0025_100450.jpg	2560x1440	0 faces	
+frame_0026_100455.jpg	2560x1440	0 faces	
+frame_0027_100459.jpg	2560x1440	0 faces	
+frame_0028_100505.jpg	2560x1440	0 faces	
+frame_0029_100509.jpg	2560x1440	1 faces	face1=70%
+frame_0030_100514.jpg	2560x1440	1 faces	face1=70%
+frame_0031_100519.jpg	2560x1440	0 faces	
+frame_0032_100525.jpg	2560x1440	0 faces	
+frame_0033_100530.jpg	2560x1440	1 faces	face1=70%
+frame_0034_100537.jpg	2560x1440	2 faces	face1=71%, face2=70%
+frame_0035_100542.jpg	2560x1440	2 faces	face1=71%, face2=70%
+frame_0036_100548.jpg	2560x1440	1 faces	face1=71%
+frame_0037_100553.jpg	2560x1440	1 faces	face1=70%
+frame_0038_100600.jpg	2560x1440	0 faces	
+frame_0039_100606.jpg	2560x1440	0 faces	
+frame_0040_100612.jpg	2560x1440	0 faces	
+frame_0041_100617.jpg	2560x1440	0 faces	
+frame_0042_100621.jpg	2560x1440	1 faces	face1=70%
+frame_0043_100627.jpg	2560x1440	1 faces	face1=71%
+frame_0044_100633.jpg	2560x1440	1 faces	face1=70%
+frame_0045_100641.jpg	2560x1440	2 faces	face1=70%, face2=70%
+frame_0046_100646.jpg	2560x1440	2 faces	face1=73%, face2=71%
+frame_0047_100652.jpg	2560x1440	1 faces	face1=72%
+frame_0048_100658.jpg	2560x1440	2 faces	face1=73%, face2=70%
+frame_0049_100704.jpg	2560x1440	2 faces	face1=71%, face2=70%
+frame_0050_100711.jpg	2560x1440	0 faces	
+frame_0051_100717.jpg	2560x1440	0 faces	
+frame_0052_100723.jpg	2560x1440	2 faces	face1=70%, face2=70%
+frame_0053_100730.jpg	2560x1440	1 faces	face1=71%
+frame_0054_100738.jpg	2560x1440	1 faces	face1=70%
+frame_0055_100747.jpg	2560x1440	0 faces	
+frame_0056_100755.jpg	2560x1440	1 faces	face1=70%
+frame_0057_100804.jpg	2560x1440	2 faces	face1=71%, face2=70%
+frame_0058_100815.jpg	2560x1440	3 faces	face1=73%, face2=72%, face3=72%
+frame_0059_100824.jpg	2560x1440	1 faces	face1=71%
